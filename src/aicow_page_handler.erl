@@ -19,8 +19,10 @@
 -spec execute(Req, Env) -> {ok, Req, Env}
 	when Req::cowboy_req:req(), Env::cowboy_middleware:env().
 execute(Req, Env=#{handler := Handler, handler_opts := HandlerOpts, render := Render }) ->
-
 	try Handler:init(Req, HandlerOpts) of
+        {ok,Req2,State}->
+            Result = terminate(normal, Req2, State, Handler,Render),
+            {ok, Req2, Env#{result => Result}};
 		{ok, Template,Req2, State} ->
             Req3 = Render:render(Handler,Template,Req2,State),
 			Result = terminate(normal, Req3, State, Handler,Render),
