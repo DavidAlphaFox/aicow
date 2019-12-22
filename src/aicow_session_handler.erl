@@ -1,6 +1,7 @@
 -module(aicow_session_handler).
 -export([execute/2]).
 -export([session_id/1,session_id/2]).
+-export([remove/1]).
 
 -define(SESSION_COOKIE_NAME,<<"aicow.session">>).
 
@@ -37,6 +38,9 @@ session_id(Req,Env)->
     cowboy_req:set_resp_cookie(?SESSION_COOKIE_NAME,
                                Token, Req,SessionCookie).
 
+remove(Req)->
+    erlang:put(session,undefined),
+    cowboy_req:set_resp_cookie(?SESSION_COOKIE_NAME,<<"">>,Req,#{max_age => 0}).
 token()->
     UUID = ai_uuid:uuid_to_string(ai_uuid:get_v4(),binary_standard),
     Padding = crypto:strong_rand_bytes(8),
