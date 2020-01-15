@@ -1,5 +1,10 @@
 -module(aicow_auth_handler).
 -export([execute/2]).
+-ifdef(OTP_RELEASE).
+-define(LISTS,lists).
+-else.
+-define(LISTS,ai_lists).
+-endif.
 
 execute( Req, Env) ->
     case maps:get(auth,Env,undefined) of
@@ -21,7 +26,7 @@ execute(Req,Env,true,_IncludePath)-> {ok,Req,Env};
 execute(Req,Env,_,IncludePath)->
     Path = cowboy_req:path(Req),
     Include =
-        lists:search(fun({E,_Module})->
+        ?LISTS:search(fun({E,_Module})->
                              case re:run(Path,E) of
                                  {match,_} -> true;
                                  nomatch -> false

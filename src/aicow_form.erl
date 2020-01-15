@@ -20,7 +20,7 @@ verify_csrf(Token,Secret,Session,Param,Method,Path)->
 
 build(Secret,Req,Method)->
     Path = aicow_path:with_query(Req),
-    Session =  aicow_session_handler:session_id(Req) ,
+    Session =  aicow_session_handler:get_session(),
     {CSRFKey,CSRFToken} = build_csrf(Secret,Session,Method,Path),
     #{
       <<"path">> => Path,
@@ -33,7 +33,7 @@ build(Secret,Req,Method)->
 verify(Secret,Req,Form)->
     Method = cowboy_req:method(Req),
     Path = aicow_path:with_query(Req),
-    case aicow_session_handler:session_id(Req) of
+    case aicow_session_handler:get_session() of
         undefined -> false;
         Session ->
             CSRFKey = proplists:get_value(<<"_csrf_param">>,Form),

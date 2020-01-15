@@ -3,9 +3,9 @@
 -export([start_page/6,start_page/4]).
 
 
-start(Name,Port,Router,Auth,SessionCookie)->
+start(Name,Port,Router,Auth,Session)->
     Env = env(Router),
-    Env0 = env(Env,Auth,SessionCookie),
+    Env0 = env(Env,Auth,Session),
     start(Name,Port,Env0,[cowboy_router,aicow_session_handler,aicow_auth_handler,cowboy_handler]).
 
 start(Name,Port,Env,Middlewares)->
@@ -16,10 +16,10 @@ start(Name,Port,Env,Middlewares)->
             cowboy:start_clear(Name,[{port, Port}],#{env => Env,middlewares => Middlewares })
     end.
 
-start_page(Name,Port,Router,Render,Auth,SessionCookie)->
+start_page(Name,Port,Router,Render,Auth,Session)->
     Env = env(Router),
     Env0 = Env#{render => Render},
-    Env1 = env(Env0,Auth,SessionCookie),
+    Env1 = env(Env0,Auth,Session),
     start(Name,Port,Env1,[cowboy_router,aicow_session_handler,aicow_auth_handler,aicow_page_handler]).
 
 start_page(Name,Port,Router,Render)->
@@ -37,5 +37,5 @@ env(Router)->
 
 env(Acc,undefined,undefined) -> Acc;
 env(Acc,Auth,undefined) ->  Acc#{auth => Auth};
-env(Acc,undefined,SessionCookie) ->  Acc#{session_cookie => SessionCookie};
-env(Acc,Auth,SessionCookie) -> Acc#{session_cookie => SessionCookie,auth => Auth}.
+env(Acc,undefined,Session) ->  Acc#{session => Session};
+env(Acc,Auth,Session) -> Acc#{session=> Session,auth => Auth}.
