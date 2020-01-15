@@ -24,10 +24,8 @@ build(Secret,Req,Method)->
     {CSRFKey,CSRFToken} = build_csrf(Secret,Session,Method,Path),
     #{
       <<"path">> => Path,
-      <<"csrf">> => #{
-                      <<"param">> => CSRFKey,
-                      <<"token">> => CSRFToken
-                     }
+      <<"_csrf_param">> => CSRFKey,
+      <<"_csrf_token">> => CSRFToken
      }.
 
 verify(Secret,Req,Form)->
