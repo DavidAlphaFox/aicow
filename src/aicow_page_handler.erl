@@ -46,7 +46,7 @@ terminate(Reason, Req, State, Handler,Render) ->
 		false ->
 			case Reason of
 				normal -> ok;
-				_ -> Render:render_exception(Handler,Reason,Req,State)
+				_ -> Render:render_exception(Reason,Req,State,Handler)
 			end
 	end.
 
