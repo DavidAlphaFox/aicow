@@ -3,7 +3,7 @@
 %% Helper functions for encoding/decoding ECDSA signature
 %%
 %% @end
--module(aijwt_ecdsa).
+-module(aicow_jwt_ecdsa).
 
 -include_lib("public_key/include/public_key.hrl").
 
@@ -67,7 +67,7 @@
 %%
 %% @end
 signature(Base64Sig) ->
-    Signature = base64url:decode(Base64Sig),
+    Signature = ai_base64:decode(Base64Sig,#{url => true}),
     SignatureLen = byte_size(Signature),
     {RBin, SBin} = split_binary(Signature, (SignatureLen div 2)),
     R = crypto:bytes_to_integer(RBin),

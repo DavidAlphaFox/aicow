@@ -5,7 +5,7 @@
 %% Rewritten by Yuri Artemev (http://artemff.com)
 %%
 %% @end
--module(aijwt).
+-module(aicow_jwt).
 
 -export([decode/2, decode/3]).
 -export([encode/3, encode/4]).
@@ -247,7 +247,7 @@ jwt_check_sig({rsa, Crypto}, Payload, Signature, Key) ->
     public_key:verify(Payload, Crypto, ai_base64:decode(Signature,Base64Options), Key);
 
 jwt_check_sig({ecdsa, Crypto}, Payload, Signature, Key) ->
-    public_key:verify(Payload, Crypto, aijwt_ecdsa:signature(Signature), Key);
+    public_key:verify(Payload, Crypto, aicow_jwt_ecdsa:signature(Signature), Key);
 
 jwt_check_sig(_, _, _, _) ->
     false.
@@ -293,7 +293,7 @@ jwt_sign_with_crypto({rsa, Crypto}, Payload, Key) ->
 
 jwt_sign_with_crypto({ecdsa, Crypto}, Payload, Key) ->
     Base64Options = #{url => true},
-    ai_base64:encode(aijwt_ecdsa:signature(Payload, Crypto, Key),Base64Options);
+    ai_base64:encode(aicow_jwt_ecdsa:signature(Payload, Crypto, Key),Base64Options);
 
 jwt_sign_with_crypto(_, _Payload, _Key) ->
     undefined.
