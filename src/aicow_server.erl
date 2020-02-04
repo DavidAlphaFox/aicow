@@ -31,7 +31,9 @@ middlewares(Config)->
   M0 =
     case maps:get(render,Config,undefined) of 
       undefined -> [cowboy_handler];
-      _ -> [aicow_page_handler]
+      Module ->
+        code:ensure_loaded(Module),
+        [aicow_page_handler]
     end,
   M1 = middlewares(Config,M0),
   [cowboy_router|M1].
