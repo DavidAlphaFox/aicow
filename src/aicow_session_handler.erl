@@ -44,15 +44,15 @@ get_session(Req,Env) ->
 
 create_session(Req,Env)->
     CookieName = cookie_name(Env),
-    Session = maps:get(session,Env),
-    CookieConfig = maps:get(cookie_config,Session,?SESSION_COOKIE_CONFIG),
+    SessionEnv = maps:get(session,Env),
+    CookieConfig = maps:get(cookie_config,SessionEnv,?SESSION_COOKIE_CONFIG),
     Session = session(),
     erlang:put(?SESSION_CACHE_KEY,Session),
     cowboy_req:set_resp_cookie(CookieName,Session, Req,CookieConfig).
 
 cookie_name(Env)->
-    Session = maps:get(session,Env),
-    CookieName = ai_string:to_string(maps:get(cookie_name,Session,?SESSION_COOKIE_NAME)),
+    SessionEnv = maps:get(session,Env),
+    CookieName = ai_string:to_string(maps:get(cookie_name,SessionEnv,?SESSION_COOKIE_NAME)),
     erlang:put(?COOKIE_NAME_CACHE_KEY,CookieName),
     CookieName.
 
