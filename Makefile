@@ -1,6 +1,6 @@
 PROJECT = aicow
 PROJECT_DESCRIPTION = Cowboy helper for productions of ailink.io
-PROJECT_VERSION = 0.1.4
+PROJECT_VERSION = 0.1.5
 
 ERLC_OPTS = +debug_info +warn_export_vars +warn_shadow_vars +warn_obsolete_guard -DENABLE_LOG
 
