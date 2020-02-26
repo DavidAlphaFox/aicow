@@ -9,38 +9,38 @@
 -define(COOKIE_NAME_CACHE_KEY,{?MODULE,cookie_name}).
 
 execute(Req,Env)->
-    case get_session(Req,Env) of
-        undefined ->
-            Req0 = create_session(Req,Env),
-            {ok,Req0,Env};
-        Session ->
-            erlang:put(?SESSION_CACHE_KEY,Session),
-            {ok,Req,Env}
-    end.
+  case get_session(Req,Env) of
+    undefined ->
+      Req0 = create_session(Req,Env),
+      {ok,Req0,Env};
+    Session ->
+      erlang:put(?SESSION_CACHE_KEY,Session),
+      {ok,Req,Env}
+  end.
 
 
 get_session()-> erlang:get(?SESSION_CACHE_KEY).
 
 remove_session(Req)->
-    CookieName = erlang:get(?COOKIE_NAME_CACHE_KEY),
-    erlang:put(?SESSION_CACHE_KEY,undefined),
-    case CookieName of
-        undefined -> Req;
-        _ ->
-            cowboy_req:set_resp_cookie(CookieName,<<"">>,Req,#{max_age => 0})
-    end.
+  CookieName = erlang:get(?COOKIE_NAME_CACHE_KEY),
+  erlang:put(?SESSION_CACHE_KEY,undefined),
+  case CookieName of
+    undefined -> Req;
+    _ ->
+      cowboy_req:set_resp_cookie(CookieName,<<"">>,Req,#{max_age => 0})
+  end.
 
 get_session(Req,Env) ->
-    CookieName = cookie_name(Env),
-    try cowboy_req:parse_cookies(Req) of
+  CookieName = cookie_name(Env),
+  try cowboy_req:parse_cookies(Req) of
       [] -> undefined;
       Cookies ->
-        SessionID =  proplists:get_value(CookieName,Cookies),
-        erlang:put(?SESSION_CACHE_KEY,SessionID),
-        SessionID
-    catch
-        _:_ -> undefined
-    end.
+      SessionID =  proplists:get_value(CookieName,Cookies),
+      erlang:put(?SESSION_CACHE_KEY,SessionID),
+      SessionID
+  catch
+    _:_ -> undefined
+  end.
 
 create_session(Req,Env)->
     CookieName = cookie_name(Env),

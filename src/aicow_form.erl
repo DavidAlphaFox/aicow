@@ -19,22 +19,22 @@ verify_csrf(Token,Secret,Session,Param,Method,Path)->
   CSRFToken == Token.
 
 build(Secret,Req,Method)->
-    Path = aicow_path:with_query(Req),
-    Session =  aicow_session_handler:get_session(),
-    {CSRFKey,CSRFToken} = build_csrf(Secret,Session,Method,Path),
-    #{
-      <<"path">> => Path,
-      <<"_csrf_param">> => CSRFKey,
-      <<"_csrf_token">> => CSRFToken
-     }.
+  Path = aicow_path:with_query(Req),
+  Session =  aicow_session_handler:get_session(),
+  {CSRFKey,CSRFToken} = build_csrf(Secret,Session,Method,Path),
+  #{
+    path => Path,
+    '_csrf_param' => CSRFKey,
+    '_csrf_token' => CSRFToken
+   }.
 
 verify(Secret,Req,Form)->
-    Method = cowboy_req:method(Req),
-    Path = aicow_path:with_query(Req),
-    case aicow_session_handler:get_session() of
-        undefined -> false;
-        Session ->
-            CSRFKey = proplists:get_value(<<"_csrf_param">>,Form),
-            CSRFToken = proplists:get_value(<<"_csrf_token">>,Form),
-            verify_csrf(CSRFToken,Secret,Session,CSRFKey,Method,Path)
-    end.
+  Method = cowboy_req:method(Req),
+  Path = aicow_path:with_query(Req),
+  case aicow_session_handler:get_session() of
+    undefined -> false;
+    Session ->
+      CSRFKey = proplists:get_value(<<"_csrf_param">>,Form),
+      CSRFToken = proplists:get_value(<<"_csrf_token">>,Form),
+      verify_csrf(CSRFToken,Secret,Session,CSRFKey,Method,Path)
+  end.
