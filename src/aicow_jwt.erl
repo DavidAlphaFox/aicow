@@ -41,20 +41,16 @@
 %%
 %% @end
 encode(Alg, ClaimsSet, Key) ->
-    Base64Options = #{url => true},
-    ClaimsSet0 =
-        try
-            maps:from_list(ClaimsSet)
-        catch
-            _Any -> ClaimsSet
-        end,
-    Claims = ai_base64:encode(jiffy:encode(ClaimsSet0),Base64Options),
-    Header = ai_base64:encode(jiffy:encode(jwt_header(Alg)),Base64Options),
-    Payload = <<Header/binary, ".", Claims/binary>>,
-    case jwt_sign(Alg, Payload, Key) of
-        undefined -> {error, algorithm_not_supported};
-        Signature -> {ok, <<Payload/binary, ".", Signature/binary>>}
-    end.
+  Base64Options = #{url => true},
+  ClaimsSet0 = claims(ClaimsSet),
+
+  Claims = ai_base64:encode(jiffy:encode(ClaimsSet0),Base64Options),
+  Header = ai_base64:encode(jiffy:encode(jwt_header(Alg)),Base64Options),
+  Payload = <<Header/binary, ".", Claims/binary>>,
+  case jwt_sign(Alg, Payload, Key) of
+    undefined -> {error, algorithm_not_supported};
+    Signature -> {ok, <<Payload/binary, ".", Signature/binary>>}
+  end.
 
 -spec encode(
     Alg :: binary(),
@@ -330,10 +326,13 @@ append_claim(ClaimsSet, Key, Val) when is_map(ClaimsSet) ->
 append_claim(ClaimsSet, Key, Val) -> [{ Key, Val } | ClaimsSet].
 
 pem_to_key(Pem) ->
-    Decoded = case public_key:pem_decode(Pem) of
-        [_, Key] ->
-            Key;
-        [Key] ->
-            Key
+  Decoded =
+    case public_key:pem_decode(Pem) of
+      [_, Key] -> Key;
+      [Key] -> Key
     end,
-    public_key:pem_entry_decode(Decoded).
+  public_key:pem_entry_decode(Decoded).
+claims(Claims) when erlang:is_list(Claims)->
+  maps:from_list(Claims);
+claims(Claims) when erlang:is_map(Claims)-> Claims;
+claims(_Claims) -> error({claims,format_not_supported}).
