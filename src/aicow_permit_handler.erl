@@ -1,22 +1,10 @@
 -module(aicow_permit_handler).
--export([env/2,execute/2]).
+-export([execute/2]).
 -ifdef(OTP_RELEASE).
 -define(LISTS,lists).
 -else.
 -define(LISTS,ai_lists).
 -endif.
-
-env(Include,Exclude)->
-  Include0 =
-    if Include == undefined -> [];
-       true -> Include
-    end,
-  Exclude0 =
-    if Exclude == undefined -> [];
-       true -> Exclude
-    end,
-  #{include => Include0,
-    exclued => Exclude0}.
 
 execute( Req, Env) ->
   Permit = maps:get(permit,Env,undefined),
