@@ -1,5 +1,5 @@
 -module(aicow_rest).
--export([options/2,options/3]).
+-export([options/2,options/3,allow_cors/2]).
 -export([json/4]).
 
 -spec options(cowboy_req:req(),[atom()]) -> cowboy_req:req().
@@ -16,6 +16,16 @@ options(Req,Actions,Headers)->
     end,
   DefaultHeaders = #{<<"access-control-allow-methods">> => Actions1,
                      <<"access-control-allow-origin">> => <<"*">>,
+                     <<"access-control-allow-headers">> => <<"authorization">>},
+  Headers0 = maps:merge(DefaultHeaders,Headers),
+  cowboy_req:set_resp_headers(Headers0,Req).
+
+-spec allow_cors(cowboy_req:req(),undefined|map())-> cowboy_req:req().
+allow_cors(Req,undefined) ->
+  cowboy_req:set_resp_header(<<"access-control-allow-origin">>,
+                             <<"*">>, Req);
+allow_cors(Req,Headers) ->
+  DefaultHeaders = #{<<"access-control-allow-origin">> => <<"*">>,
                      <<"access-control-allow-headers">> => <<"authorization">>},
   Headers0 = maps:merge(DefaultHeaders,Headers),
   cowboy_req:set_resp_headers(Headers0,Req).
