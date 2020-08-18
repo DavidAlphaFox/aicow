@@ -5,7 +5,7 @@
 
 build(Secret,Session,Param,Method,Path)->
   Payload = <<Session/binary,Param/binary,Method/binary,Path/binary>>,
-  SecretPayload = crypto:mac(hmac,sha256,Secret,Payload),
+  SecretPayload = ai_crypto:mac(hmac,sha256,Secret,Payload),
   ai_base64:encode(SecretPayload,#{padding => false}).
 
 build(Secret,Session,Method,Path)->
